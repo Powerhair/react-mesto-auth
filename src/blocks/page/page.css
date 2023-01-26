@@ -1,0 +1,9 @@
+.page {
+  padding: 0;
+  margin: 0 auto;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #000;
+  font-family: 'Inter', 'Tahoma', sans-serif;
+  text-rendering: optimizeLegibility;
+}

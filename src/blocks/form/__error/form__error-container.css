@@ -1,0 +1,8 @@
+.form__error-conteiner {
+    margin: 0;
+    height: 33px;
+}
+
+.form__error-conteiner:last-of-type {
+    height: 0;
+}

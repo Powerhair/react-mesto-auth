@@ -1,0 +1,10 @@
+.form-input-message-error {
+    visibility: hidden;
+}
+  
+
+
+.form-input-message-error:last-of-type {
+    margin-bottom: 0;
+}
+

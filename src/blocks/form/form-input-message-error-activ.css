@@ -1,0 +1,25 @@
+.form-input-message-error-active {
+  visibility: visible;
+  min-height: 30px;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 1.2;
+  color: red;
+  margin-bottom: 13px;
+}
+
+.form-input-message-error-active + .form__error-conteiner span {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 15px;
+  color: red;
+  visibility: visible;
+}
+
+@media all and (max-width: 440px) {
+  .form-input-message-error-active {
+    margin: 5px 22px 5px 22px;
+  }
+}

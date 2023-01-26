@@ -1,0 +1,13 @@
+.element {
+    border-radius: 10px;
+    width: 100%;
+    justify-self: center;
+    align-self: center;
+    position: relative;
+}
+
+.element:hover {
+    opacity: .7;
+    transition: 0.7s ease;
+}
+
