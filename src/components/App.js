@@ -4,31 +4,111 @@ import Main from './Main.js';
 import Footer from './Footer.js';
 import ImagePopup from './ImagePopup';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import '../index.css';
 import { api } from '../utils/Api';
 import AddPlacePopup from './AddPlacePopup.js';
 import EditAvatarPopup from './EditAvatarPopup.js';
 import EditProfilePopup from './EditProfilePopup.js';
 import DeletePopup from './DeletePopup.js';
+import Login from './Login.js';
+import Register from './Register.js';
+import * as auth from '../auth';
+import { register, login } from '../auth';
+import ProtectedRouteElement from './ProtectedRoute.js';
+import InfoTooltip from './InfoToolTip.js';
 
 function App() {
   const [cards, setCards] = useState([]);
   const [currentUser, setCurrentUser] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [loggedIn, isloggedIn] = useState(true);
+  const [registerResponse, isregisterResponse] = useState({
+    status: false,
+    text: '',
+  });
+  const [headerEmail, setHeaderEmail] = useState('');
 
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isAddCardPopupOpen, setIsAddCardPopupOpen] = useState(false);
   const [isOpenConfimPopup, setIsAddConfimPopup] = useState(false);
+  const [isOpenInfoTooltip, setOpenInfoTooltip] = useState(false);
   const [selectedCard, setSelectedCard] = useState({});
+
+  const navigate = useNavigate();
+
+  function handelRegisterClick(password, email) {
+    register(password, email)
+      .then((res) => {
+        if (res) {
+          isregisterResponse({
+            status: true,
+            text: 'Вы успешно зарегистрировались!',
+          });
+          setOpenInfoTooltip(true);
+          navigate('/sign-in', { replace: true });
+        }
+      })
+      .catch((res) => {
+        if (res === 'Ошибка 401') {
+          setOpenInfoTooltip(true);
+          isregisterResponse({
+            status: false,
+            text: 'Вы не зарегестрированны',
+          });
+        } else if (!res) {
+          isregisterResponse({
+            status: false,
+            text: res,
+          });
+        }
+      });
+  }
+
+  function handelLoginClick(password, email) {
+    login(password, email)
+      .then((data) => {
+        localStorage.setItem('jwt', data.token);
+        isloggedIn(true);
+        navigate('/react-mesto-auth', { replace: true });
+      })
+      .catch((res) => {
+        if (res === 'Ошибка 401') {
+          setOpenInfoTooltip(true);
+          isregisterResponse({
+            status: false,
+            text: 'Вы не зарегестрированны',
+          });
+        } else if (!res) {
+          isregisterResponse({
+            status: false,
+            text: res,
+          });
+        }
+      });
+  }
+
+  useEffect(() => {
+    const jwt = localStorage.getItem('jwt');
+    console.log(jwt);
+    if (jwt) {
+      auth.checkToken(jwt).then((res) => {
+        if (res) {
+          isloggedIn(true);
+          setHeaderEmail(res.data.email);
+          navigate('/react-mesto-auth', { replace: true });
+        }
+      });
+    }
+  }, []);
 
   useEffect(() => {
     Promise.all([api.getUserInfo(), api.getInitialCards()])
       .then(([currentUser, cards]) => {
         setCurrentUser(currentUser);
         setCards(cards);
-        console.log(currentUser);
       })
       .catch((err) => {
         console.log(err);
@@ -182,21 +262,44 @@ function App() {
     setIsEditAvatarPopupOpen(false);
     setIsAddCardPopupOpen(false);
     setIsAddConfimPopup(false);
+    setOpenInfoTooltip(false);
+  }
+
+  function escape() {
+    localStorage.removeItem('jwt');
+    navigate('/sign-in');
   }
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
-        <Header />
-        <Main
-          onEditAvatar={handleEditAvatarClick}
-          onEditProfile={handleEditProfileClick}
-          onAddPlace={handleAddPlaceClick}
-          onCardClick={handleCardClick}
-          cards={cards}
-          onClickCardDelete={handleConfimCardDelete}
-          onCardLike={handleCardLike}
-        />
+        <Header escape={escape} headerEmail={headerEmail} />
+        <Routes>
+          <Route
+            path="/sign-up"
+            element={<Register register={handelRegisterClick} />}
+          ></Route>
+          <Route
+            path="/sign-in"
+            element={<Login login={handelLoginClick} />}
+          ></Route>
+          <Route
+            path="/react-mesto-auth"
+            element={
+              <ProtectedRouteElement
+                component={Main}
+                onEditAvatar={handleEditAvatarClick}
+                onEditProfile={handleEditProfileClick}
+                onAddPlace={handleAddPlaceClick}
+                onCardClick={handleCardClick}
+                cards={cards}
+                onClickCardDelete={handleConfimCardDelete}
+                onCardLike={handleCardLike}
+                loggedIn={loggedIn}
+              />
+            }
+          ></Route>
+        </Routes>
         <Footer />
         <EditProfilePopup
           isOpen={isEditProfilePopupOpen}
@@ -226,6 +329,11 @@ function App() {
           onClose={closeAllPopups}
           onConfirmDeleteClick={handleCardDelete}
           card={selectedCard}
+        />
+        <InfoTooltip
+          isOpen={isOpenInfoTooltip}
+          onClose={closeAllPopups}
+          registerResponse={registerResponse}
         />
       </div>
     </CurrentUserContext.Provider>

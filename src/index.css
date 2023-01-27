@@ -67,3 +67,9 @@
 @import url(./blocks/form/__set/form__set.css);
 @import url(./blocks/form/form-input-message-error-activ.css);
 @import url(./blocks/form/__error/form__error-container.css);
+
+/* auth */
+@import url(./blocks/auth/__form/auth__form.css);
+@import url(./blocks/auth/__input/auth__input.css);
+@import url(./blocks/auth/__button/auth__button.css);
+@import url(./blocks/auth/__title/auth__title.css);
