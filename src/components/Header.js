@@ -15,20 +15,25 @@ function Header({ escape, headerEmail }) {
           }
         />
         <Route
-          path="/sign-up"
+          path="/sign-in"
           element={
-            <Link to={'/sign-in'} className="header__link">
+            <Link to={'/sign-up'} className="header__link">
               Регистрация
             </Link>
           }
         />
+        <Route
+          path="/react-mesto-auth"
+          element={
+            <div className="header__container">
+              <p className="header__email">{headerEmail}</p>
+              <Link to={'/sign-in'} onClick={escape} className="header__button">
+                Выйти
+              </Link>
+            </div>
+          }
+        />
       </Routes>
-      <div className="header__userElements_active">
-        <p className="header__userElements-email">{headerEmail}</p>
-        <button onClick={escape} className="links header__userElements-logout">
-          Выйти
-        </button>
-      </div>
     </header>
   );
 }

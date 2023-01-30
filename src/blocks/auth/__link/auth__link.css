@@ -1,15 +1,17 @@
-.header__link {
+.auth__link {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 400;
-  font-size: 18px;
-  line-height: 22px;
-  text-align: right;
+  font-size: 14px;
+  line-height: 17px;
+  text-align: center;
+  max-width: 358px;
   color: #ffffff;
   text-decoration: none;
+  margin: 15px 0 0;
   transition: 0.7s ease;
 }
 
-.header__link:hover {
+.auth__link:hover {
   opacity: 0.6;
 }

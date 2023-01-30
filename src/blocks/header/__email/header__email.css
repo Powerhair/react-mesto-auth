@@ -1,15 +1,10 @@
-.header__link {
+.header__email {
   font-family: 'Inter';
   font-style: normal;
-  font-weight: 400;
+  font-weight: 500;
   font-size: 18px;
   line-height: 22px;
   text-align: right;
   color: #ffffff;
-  text-decoration: none;
-  transition: 0.7s ease;
-}
-
-.header__link:hover {
-  opacity: 0.6;
+  margin: 0;
 }

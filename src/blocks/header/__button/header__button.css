@@ -1,15 +1,18 @@
-.header__link {
+.header__button {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 400;
   font-size: 18px;
   line-height: 22px;
   text-align: right;
-  color: #ffffff;
+  color: #a9a9a9;
+  background-color: transparent;
+  border: none;
+  margin: 0;
   text-decoration: none;
   transition: 0.7s ease;
 }
 
-.header__link:hover {
-  opacity: 0.6;
+.header__button:hover {
+  opacity: 0.8;
 }

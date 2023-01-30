@@ -22,8 +22,8 @@ function App() {
   const [cards, setCards] = useState([]);
   const [currentUser, setCurrentUser] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const [loggedIn, isloggedIn] = useState(true);
-  const [registerResponse, isregisterResponse] = useState({
+  const [loggedIn, setloggedIn] = useState(true);
+  const [registerMessage, setRegisterMessage] = useState({
     status: false,
     text: '',
   });
@@ -43,60 +43,48 @@ function App() {
     register(password, email)
       .then((res) => {
         if (res) {
-          isregisterResponse({
+          setRegisterMessage({
             status: true,
             text: 'Вы успешно зарегистрировались!',
           });
-          setOpenInfoTooltip(true);
           navigate('/sign-in', { replace: true });
         }
       })
-      .catch((res) => {
-        if (res === 'Ошибка 401') {
-          setOpenInfoTooltip(true);
-          isregisterResponse({
-            status: false,
-            text: 'Вы не зарегестрированны',
-          });
-        } else if (!res) {
-          isregisterResponse({
-            status: false,
-            text: res,
-          });
-        }
-      });
+      .catch((err) => {
+        setOpenInfoTooltip(true);
+        setRegisterMessage({
+          status: false,
+          text: 'Что-то пошло не так! Попробуйте ещё раз.',
+        });
+        console.log(err);
+      })
+      .finally(() => setOpenInfoTooltip(true));
   }
 
   function handelLoginClick(password, email) {
     login(password, email)
       .then((data) => {
         localStorage.setItem('jwt', data.token);
-        isloggedIn(true);
+        setloggedIn(true);
+        setHeaderEmail(email);
         navigate('/react-mesto-auth', { replace: true });
       })
-      .catch((res) => {
-        if (res === 'Ошибка 401') {
-          setOpenInfoTooltip(true);
-          isregisterResponse({
-            status: false,
-            text: 'Вы не зарегестрированны',
-          });
-        } else if (!res) {
-          isregisterResponse({
-            status: false,
-            text: res,
-          });
-        }
+      .catch((err) => {
+        setOpenInfoTooltip(true);
+        setRegisterMessage({
+          status: false,
+          text: 'Вы не зарегестрированны',
+        });
+        console.log(err);
       });
   }
 
   useEffect(() => {
     const jwt = localStorage.getItem('jwt');
-    console.log(jwt);
     if (jwt) {
       auth.checkToken(jwt).then((res) => {
         if (res) {
-          isloggedIn(true);
+          setloggedIn(true);
           setHeaderEmail(res.data.email);
           navigate('/react-mesto-auth', { replace: true });
         }
@@ -267,6 +255,8 @@ function App() {
 
   function escape() {
     localStorage.removeItem('jwt');
+    setHeaderEmail('');
+    setloggedIn(false);
     navigate('/sign-in');
   }
 
@@ -333,7 +323,7 @@ function App() {
         <InfoTooltip
           isOpen={isOpenInfoTooltip}
           onClose={closeAllPopups}
-          registerResponse={registerResponse}
+          registerMessage={registerMessage}
         />
       </div>
     </CurrentUserContext.Provider>

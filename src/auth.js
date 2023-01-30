@@ -30,6 +30,7 @@ export const login = (password, email) => {
     body: JSON.stringify({ password, email }),
   }).then((res) => {
     return checkResponse(res);
+    console.log(res);
   });
 };
 

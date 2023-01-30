@@ -1,5 +1,8 @@
 .auth__form {
   display: flex;
   flex-direction: column;
-  margin: 60px 461px 80px 461px;
+  margin: 60px auto 80px auto;
+  /* align-items: center; */
+  justify-content: center;
+  width: 358px;
 }
