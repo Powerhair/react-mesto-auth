@@ -38,6 +38,7 @@ function EditAvatarPopup(props) {
       isOpen={props.isOpen}
       name="сhangeAvatar"
       title={'Обновить аватар'}
+      onClose={props.onClose}
     >
       <input
         name="linkInput"

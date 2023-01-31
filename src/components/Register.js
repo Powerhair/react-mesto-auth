@@ -7,6 +7,8 @@ function Register({ register }) {
     password: '',
   });
 
+  const initalForm = { email: '', password: '' };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -19,13 +21,14 @@ function Register({ register }) {
   function handleSubmit(e) {
     e.preventDefault();
     register(formValue.password, formValue.email);
-    formValue.password = '';
-    formValue.email = '';
+
+    setFormValue(initalForm);
   }
 
   return (
     <form className="auth__form" onSubmit={handleSubmit} noValidate>
       <h2 className="auth__title">Регистрация</h2>
+
       <input
         id="email"
         name="email"
@@ -51,6 +54,7 @@ function Register({ register }) {
       <button type="submit" className="auth__button">
         Зарегистрироваться
       </button>
+
       <Link to="/sign-in" className="auth__link">
         Уже зарегистрировались? Войти
       </Link>

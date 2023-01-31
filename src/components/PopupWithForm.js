@@ -1,4 +1,5 @@
 import React from 'react';
+import { useEffect } from 'react';
 
 function PopupWithForm({
   disabled,
@@ -10,19 +11,38 @@ function PopupWithForm({
   onSubmit,
   children,
 }) {
+  function handleStop(e) {
+    e.stopPropagation();
+  }
+
+  useEffect(() => {
+    function handelEscape(evt) {
+      if (evt.key === 'Escape') {
+        onClose();
+      }
+    }
+    document.addEventListener('keydown', handelEscape);
+  }, [isOpen]);
+
   return (
     <div
       onClick={onClose}
       className={`popup popup_${name} ${isOpen ? `popup_opened` : ''}`}
     >
-      <form onSubmit={onSubmit} className="form" name={name} noValidate>
+      <form
+        onClick={handleStop}
+        onSubmit={onSubmit}
+        className="form"
+        name={name}
+        noValidate
+      >
         <h3 className="popup__title">{title}</h3>
         {children}
         <button
           disabled={disabled}
           className={
             disabled
-              ? 'fpopup__button-submit popup__button_invalid'
+              ? 'popup__button-submit popup__button_invalid'
               : 'popup__button-submit'
           }
           type="submit"

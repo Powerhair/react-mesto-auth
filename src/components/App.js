@@ -5,7 +5,6 @@ import Footer from './Footer.js';
 import ImagePopup from './ImagePopup';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import { Route, Routes, useNavigate } from 'react-router-dom';
-import '../index.css';
 import { api } from '../utils/Api';
 import AddPlacePopup from './AddPlacePopup.js';
 import EditAvatarPopup from './EditAvatarPopup.js';
@@ -13,16 +12,17 @@ import EditProfilePopup from './EditProfilePopup.js';
 import DeletePopup from './DeletePopup.js';
 import Login from './Login.js';
 import Register from './Register.js';
-import * as auth from '../auth';
-import { register, login } from '../auth';
+import * as auth from '../utils/auth';
+import { register, login } from '../utils/auth';
 import ProtectedRouteElement from './ProtectedRoute.js';
 import InfoTooltip from './InfoToolTip.js';
+import PopupWithForm from './PopupWithForm.js';
 
 function App() {
   const [cards, setCards] = useState([]);
   const [currentUser, setCurrentUser] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const [loggedIn, setloggedIn] = useState(true);
+  const [loggedIn, setloggedIn] = useState(false);
   const [registerMessage, setRegisterMessage] = useState({
     status: false,
     text: '',
@@ -67,13 +67,13 @@ function App() {
         localStorage.setItem('jwt', data.token);
         setloggedIn(true);
         setHeaderEmail(email);
-        navigate('/react-mesto-auth', { replace: true });
+        navigate('/', { replace: true });
       })
       .catch((err) => {
         setOpenInfoTooltip(true);
         setRegisterMessage({
           status: false,
-          text: 'Вы не зарегестрированны',
+          text: 'Логин или пароль введены неверно',
         });
         console.log(err);
       });
@@ -82,13 +82,18 @@ function App() {
   useEffect(() => {
     const jwt = localStorage.getItem('jwt');
     if (jwt) {
-      auth.checkToken(jwt).then((res) => {
-        if (res) {
-          setloggedIn(true);
-          setHeaderEmail(res.data.email);
-          navigate('/react-mesto-auth', { replace: true });
-        }
-      });
+      auth
+        .checkToken(jwt)
+        .then((res) => {
+          if (res) {
+            setloggedIn(true);
+            setHeaderEmail(res.data.email);
+            navigate('/', { replace: true });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   }, []);
 
@@ -101,7 +106,7 @@ function App() {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [setloggedIn]);
 
   function handleCardClick(card) {
     setIsAddCardPopupOpen(true);
@@ -119,8 +124,8 @@ function App() {
       .removeCard(card._id)
       .then(() => {
         setCards((cards) => cards.filter((c) => c._id !== card._id));
+        closeAllPopups();
       })
-      .then(closeAllPopups)
       .catch((err) => {
         console.log(err);
       })
@@ -149,10 +154,8 @@ function App() {
         setCurrentUser(currentUser);
         closeAllPopups();
       })
-      .then(closeAllPopups)
       .catch((err) => {
         console.log(err);
-        console.log(data);
       })
       .finally(() => {
         setIsLoading(false);
@@ -167,7 +170,6 @@ function App() {
         setCurrentUser(currentUser);
         closeAllPopups();
       })
-      .then(closeAllPopups)
       .catch((err) => {
         console.log(err);
       })
@@ -184,7 +186,6 @@ function App() {
         setCards([newCard, ...cards]);
         closeAllPopups();
       })
-      .then(closeAllPopups)
       .catch((err) => {
         console.log(err);
       })
@@ -220,30 +221,6 @@ function App() {
     }
   }
 
-  useEffect(() => {
-    function handelEscape(evt) {
-      if (evt.key === 'Escape') {
-        closeAllPopups();
-      }
-    }
-    function handleClosePopups(evt) {
-      if (
-        evt.target.classList.contains('popup_opened') ||
-        evt.target.classList.contains('popup__close')
-      ) {
-        closeAllPopups();
-      }
-    }
-
-    document.addEventListener('mousedown', handleClosePopups);
-    document.addEventListener('keydown', handelEscape);
-
-    return () => {
-      document.removeEventListener('keydown', handelEscape);
-      document.removeEventListener('mousedown', handleClosePopups);
-    };
-  }, []);
-
   function closeAllPopups() {
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
@@ -253,7 +230,7 @@ function App() {
     setOpenInfoTooltip(false);
   }
 
-  function escape() {
+  function logOut() {
     localStorage.removeItem('jwt');
     setHeaderEmail('');
     setloggedIn(false);
@@ -263,7 +240,7 @@ function App() {
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
-        <Header escape={escape} headerEmail={headerEmail} />
+        <Header logOut={logOut} headerEmail={headerEmail} />
         <Routes>
           <Route
             path="/sign-up"
@@ -274,7 +251,7 @@ function App() {
             element={<Login login={handelLoginClick} />}
           ></Route>
           <Route
-            path="/react-mesto-auth"
+            path="/"
             element={
               <ProtectedRouteElement
                 component={Main}
@@ -293,21 +270,21 @@ function App() {
         <Footer />
         <EditProfilePopup
           isOpen={isEditProfilePopupOpen}
-          onClose={closeAllPopups}
           isLoading={isLoading}
           onUpdateUser={handleUpdateUser}
+          onClose={closeAllPopups}
         />
         <AddPlacePopup
           isOpen={isAddPlacePopupOpen}
-          onClose={closeAllPopups}
           isLoading={isLoading}
           onAddCard={handleAddCard}
+          onClose={closeAllPopups}
         />
         <EditAvatarPopup
           isOpen={isEditAvatarPopupOpen}
-          onClose={closeAllPopups}
           isLoading={isLoading}
           onUpdateAvatar={handleUpdateAvatar}
+          onClose={closeAllPopups}
         />
         <ImagePopup
           isOpen={isAddCardPopupOpen}
@@ -316,9 +293,10 @@ function App() {
         ></ImagePopup>
         <DeletePopup
           isOpen={isOpenConfimPopup}
-          onClose={closeAllPopups}
           onConfirmDeleteClick={handleCardDelete}
           card={selectedCard}
+          isLoading={isLoading}
+          onClose={closeAllPopups}
         />
         <InfoTooltip
           isOpen={isOpenInfoTooltip}

@@ -62,6 +62,7 @@ function EditProfilePopup(props) {
       buttonText={props.isLoading ? `Сохранение...` : `Сохранить`}
       isOpen={props.isOpen}
       onSubmit={handleSubmit}
+      onClose={props.onClose}
     >
       <input
         value={name}

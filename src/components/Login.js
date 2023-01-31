@@ -6,6 +6,8 @@ function Login({ login }) {
     password: '',
   });
 
+  const initalForm = { email: '', password: '' };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -18,8 +20,7 @@ function Login({ login }) {
   function handleSubmit(e) {
     e.preventDefault();
     login(formValue.password, formValue.email);
-    formValue.password = '';
-    formValue.email = '';
+    setFormValue(initalForm);
   }
 
   return (

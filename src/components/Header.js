@@ -1,7 +1,7 @@
 import logo from '../image/mesto_logo.svg';
 import { Route, Link, Routes } from 'react-router-dom';
 
-function Header({ escape, headerEmail }) {
+function Header({ logOut, headerEmail }) {
   return (
     <header className="header">
       <img src={logo} alt="Место" className="header__logo" />
@@ -23,11 +23,11 @@ function Header({ escape, headerEmail }) {
           }
         />
         <Route
-          path="/react-mesto-auth"
+          path="/"
           element={
             <div className="header__container">
               <p className="header__email">{headerEmail}</p>
-              <Link to={'/sign-in'} onClick={escape} className="header__button">
+              <Link to={'/sign-in'} onClick={logOut} className="header__button">
                 Выйти
               </Link>
             </div>

@@ -21,13 +21,13 @@ function Main(props) {
           <p className="profile__text">{currentUser.about}</p>
           <button
             onClick={props.onEditProfile}
-            className="button profile__editButton"
+            className="button profile__edit-button"
             type="button"
           ></button>
         </div>
         <button
           onClick={props.onAddPlace}
-          className="button profile__addButton"
+          className="button profile__add-button"
           type="button"
         ></button>
       </section>

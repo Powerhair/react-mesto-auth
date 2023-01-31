@@ -1,0 +1,20 @@
+.profile__edit-button {
+  border: 1px solid #ffffff;
+  width: 24px;
+  height: 24px;
+  background-image: url(../../../image/feather.svg);
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 10px 10px;
+  grid-area: editButton;
+  align-self: center;
+}
+
+@media screen and (max-width: 535px) {
+  .profile__editButton {
+    width: 18px;
+    height: 18px;
+    background-size: 7.5px;
+  }
+}

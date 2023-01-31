@@ -22,8 +22,8 @@ function Card({ card, onCardClick, onClickCardDelete, onCardLike }) {
 
   const cardLikeButton = `element__like ${isLiked && 'element__like-active'}`;
 
-  return [
-    <div className="element" key={card.cardId}>
+  return (
+    <div className="element">
       {isOwn && (
         <button
           className="element__trash"
@@ -48,8 +48,8 @@ function Card({ card, onCardClick, onClickCardDelete, onCardLike }) {
           <p className="element__like-counter">{card.likes.length}</p>
         </div>
       </div>
-    </div>,
-  ];
+    </div>
+  );
 }
 
 export default Card;
