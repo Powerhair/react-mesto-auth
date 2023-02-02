@@ -98,14 +98,16 @@ function App() {
   }, []);
 
   useEffect(() => {
-    Promise.all([api.getUserInfo(), api.getInitialCards()])
-      .then(([currentUser, cards]) => {
-        setCurrentUser(currentUser);
-        setCards(cards);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    if (loggedIn) {
+      Promise.all([api.getUserInfo(), api.getInitialCards()])
+        .then(([currentUser, cards]) => {
+          setCurrentUser(currentUser);
+          setCards(cards);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   }, [loggedIn]);
 
   function handleCardClick(card) {
