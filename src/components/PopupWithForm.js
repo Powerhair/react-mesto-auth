@@ -21,7 +21,11 @@ function PopupWithForm({
         onClose();
       }
     }
-    document.addEventListener('keydown', handelEscape);
+    if (isOpen) {
+      document.addEventListener('keydown', handelEscape);
+    }
+
+    return () => document.removeEventListener('keydown', handelEscape);
   }, [isOpen]);
 
   return (

@@ -106,7 +106,7 @@ function App() {
       .catch((err) => {
         console.log(err);
       });
-  }, [setloggedIn]);
+  }, [loggedIn]);
 
   function handleCardClick(card) {
     setIsAddCardPopupOpen(true);
